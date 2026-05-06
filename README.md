@@ -3,7 +3,9 @@
 A full-stack web application that allows users to upload PDF documents, audio, and video files and interact with an AI-powered chatbot to ask questions based on the uploaded content.
 
 ## 🚀 Live Demo
-> Record your walkthrough and paste the YouTube/Drive link here
+- Frontend: https://ai-qa-app-frontend.onrender.com
+- Backend API: https://ai-qa-app-backend.onrender.com
+- API Docs: https://ai-qa-app-backend.onrender.com/docs
 
 ## ✨ Features
 - 📄 Upload PDF documents and extract text
