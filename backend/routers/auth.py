@@ -1,15 +1,14 @@
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
-from passlib.context import CryptContext
 from jose import jwt
 from datetime import datetime, timedelta
+import hashlib
 import os
 from dotenv import load_dotenv
 
-load_dotenv()
+load_dotenv(dotenv_path=os.path.join(os.path.dirname(__file__), '..', '.env'))
 
 router = APIRouter()
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 SECRET_KEY = os.getenv("SECRET_KEY", "fallbacksecret")
 ALGORITHM = "HS256"
 
@@ -24,6 +23,12 @@ class UserLogin(BaseModel):
     username: str
     password: str
 
+def hash_password(password: str) -> str:
+    return hashlib.sha256(password.encode()).hexdigest()
+
+def verify_password(password: str, hashed: str) -> bool:
+    return hash_password(password) == hashed
+
 def create_token(username: str) -> str:
     expire = datetime.utcnow() + timedelta(hours=24)
     return jwt.encode(
@@ -36,14 +41,14 @@ def create_token(username: str) -> str:
 def register(user: UserCreate):
     if user.username in users_db:
         raise HTTPException(status_code=400, detail="Username already exists")
-    users_db[user.username] = pwd_context.hash(user.password)
+    users_db[user.username] = hash_password(user.password)
     token = create_token(user.username)
     return {"message": "User created successfully", "token": token}
 
 @router.post("/login")
 def login(user: UserLogin):
     hashed = users_db.get(user.username)
-    if not hashed or not pwd_context.verify(user.password, hashed):
+    if not hashed or not verify_password(user.password, hashed):
         raise HTTPException(status_code=401, detail="Invalid credentials")
     token = create_token(user.username)
     return {"token": token, "username": user.username}
