@@ -34,7 +34,6 @@ export default function App() {
       minHeight: "100vh", background: "#f8fafc",
       fontFamily: "'Inter', sans-serif"
     }}>
-      {/* Header */}
       <div style={{
         background: "#6366f1", color: "#fff",
         padding: "16px 32px", display: "flex",
@@ -44,12 +43,11 @@ export default function App() {
         <div>
           <h1 style={{ margin: 0, fontSize: "20px", fontWeight: 700 }}>AI Document & Media Q&A</h1>
           <p style={{ margin: 0, fontSize: "13px", opacity: 0.8 }}>
-            Upload PDFs, audio, or video — then ask questions
+            Upload PDFs, audio, or video - then ask questions
           </p>
         </div>
       </div>
 
-      {/* Main Layout */}
       <div style={{
         display: "grid",
         gridTemplateColumns: "320px 1fr",
@@ -58,7 +56,6 @@ export default function App() {
         maxWidth: "1200px",
         margin: "0 auto"
       }}>
-        {/* Left Panel */}
         <div>
           <div style={{
             background: "#fff", borderRadius: "14px",
@@ -66,7 +63,7 @@ export default function App() {
             marginBottom: "20px"
           }}>
             <h2 style={{ margin: "0 0 16px", fontSize: "16px", color: "#1e293b" }}>
-              📤 Upload File
+              Upload File
             </h2>
             <FileUpload onUploadSuccess={handleUploadSuccess} />
           </div>
@@ -76,7 +73,7 @@ export default function App() {
             padding: "20px", boxShadow: "0 1px 4px rgba(0,0,0,0.06)"
           }}>
             <h2 style={{ margin: "0 0 16px", fontSize: "16px", color: "#1e293b" }}>
-              📁 Your Documents
+              Your Documents
             </h2>
             <DocumentList
               documents={documents}
@@ -86,7 +83,6 @@ export default function App() {
           </div>
         </div>
 
-        {/* Right Panel */}
         <div style={{
           background: "#fff", borderRadius: "14px",
           boxShadow: "0 1px 4px rgba(0,0,0,0.06)",
@@ -95,7 +91,7 @@ export default function App() {
         }}>
           <div style={{ padding: "20px 20px 0" }}>
             <h2 style={{ margin: "0 0 12px", fontSize: "16px", color: "#1e293b" }}>
-              💬 Chat with Document
+              Chat with Document
             </h2>
             {selectedDoc?.type === "audio" && audioFile && (
               <AudioPlayer
