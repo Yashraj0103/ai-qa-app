@@ -1,122 +1,116 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import heroImg from './assets/hero.png'
-import './App.css'
+import { useState, useEffect } from "react";
+import FileUpload from "./components/FileUpload";
+import ChatBox from "./components/ChatBox";
+import DocumentList from "./components/DocumentList";
+import AudioPlayer from "./components/AudioPlayer";
+import { getDocuments } from "./api/client";
 
-function App() {
-  const [count, setCount] = useState(0)
+export default function App() {
+  const [documents, setDocuments] = useState([]);
+  const [selectedDoc, setSelectedDoc] = useState(null);
+  const [timestamp, setTimestamp] = useState(null);
+  const [audioFile, setAudioFile] = useState(null);
+
+  const fetchDocuments = async () => {
+    try {
+      const res = await getDocuments();
+      setDocuments(res.data);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  useEffect(() => {
+    fetchDocuments();
+  }, []);
+
+  const handleUploadSuccess = (data) => {
+    fetchDocuments();
+    setSelectedDoc({ id: data.doc_id, filename: data.filename, summary: data.summary });
+  };
 
   return (
-    <>
-      <section id="center">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
-        </div>
+    <div style={{
+      minHeight: "100vh", background: "#f8fafc",
+      fontFamily: "'Inter', sans-serif"
+    }}>
+      {/* Header */}
+      <div style={{
+        background: "#6366f1", color: "#fff",
+        padding: "16px 32px", display: "flex",
+        alignItems: "center", gap: "12px"
+      }}>
+        <span style={{ fontSize: "24px" }}>🤖</span>
         <div>
-          <h1>Get started</h1>
-          <p>
-            Edit <code>src/App.jsx</code> and save to test <code>HMR</code>
+          <h1 style={{ margin: 0, fontSize: "20px", fontWeight: 700 }}>AI Document & Media Q&A</h1>
+          <p style={{ margin: 0, fontSize: "13px", opacity: 0.8 }}>
+            Upload PDFs, audio, or video — then ask questions
           </p>
         </div>
-        <button
-          type="button"
-          className="counter"
-          onClick={() => setCount((count) => count + 1)}
-        >
-          Count is {count}
-        </button>
-      </section>
+      </div>
 
-      <div className="ticks"></div>
+      {/* Main Layout */}
+      <div style={{
+        display: "grid",
+        gridTemplateColumns: "320px 1fr",
+        gap: "24px",
+        padding: "24px",
+        maxWidth: "1200px",
+        margin: "0 auto"
+      }}>
+        {/* Left Panel */}
+        <div>
+          <div style={{
+            background: "#fff", borderRadius: "14px",
+            padding: "20px", boxShadow: "0 1px 4px rgba(0,0,0,0.06)",
+            marginBottom: "20px"
+          }}>
+            <h2 style={{ margin: "0 0 16px", fontSize: "16px", color: "#1e293b" }}>
+              📤 Upload File
+            </h2>
+            <FileUpload onUploadSuccess={handleUploadSuccess} />
+          </div>
 
-      <section id="next-steps">
-        <div id="docs">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-          <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img className="logo" src={viteLogo} alt="" />
-                Explore Vite
-              </a>
-            </li>
-            <li>
-              <a href="https://react.dev/" target="_blank">
-                <img className="button-icon" src={reactLogo} alt="" />
-                Learn more
-              </a>
-            </li>
-          </ul>
+          <div style={{
+            background: "#fff", borderRadius: "14px",
+            padding: "20px", boxShadow: "0 1px 4px rgba(0,0,0,0.06)"
+          }}>
+            <h2 style={{ margin: "0 0 16px", fontSize: "16px", color: "#1e293b" }}>
+              📁 Your Documents
+            </h2>
+            <DocumentList
+              documents={documents}
+              selectedDoc={selectedDoc}
+              onSelect={setSelectedDoc}
+            />
+          </div>
         </div>
-        <div id="social">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
-        </div>
-      </section>
 
-      <div className="ticks"></div>
-      <section id="spacer"></section>
-    </>
-  )
+        {/* Right Panel */}
+        <div style={{
+          background: "#fff", borderRadius: "14px",
+          boxShadow: "0 1px 4px rgba(0,0,0,0.06)",
+          display: "flex", flexDirection: "column",
+          height: "calc(100vh - 140px)"
+        }}>
+          <div style={{ padding: "20px 20px 0" }}>
+            <h2 style={{ margin: "0 0 12px", fontSize: "16px", color: "#1e293b" }}>
+              💬 Chat with Document
+            </h2>
+            {selectedDoc?.type === "audio" && audioFile && (
+              <AudioPlayer
+                file={audioFile}
+                timestamp={timestamp}
+                segments={selectedDoc.segments}
+              />
+            )}
+          </div>
+          <ChatBox
+            selectedDoc={selectedDoc}
+            onTimestamp={setTimestamp}
+          />
+        </div>
+      </div>
+    </div>
+  );
 }
-
-export default App
