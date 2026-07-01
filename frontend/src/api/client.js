@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API = axios.create({ baseURL: 'http://localhost:8000' });
+const API = axios.create({ baseURL: 'https://ai-qa-app-backend.onrender.com' });
 
 export const uploadPDF = (file) => {
   const form = new FormData();
